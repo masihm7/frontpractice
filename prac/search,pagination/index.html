@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <style>
+    #minicont{
+        border: 2px solid rebeccapurple;
+        width: 100%;
+    }
+    #searchx{
+        width: 200px;
+    }
+    input{
+        width: 100%;
+    }
+    form{
+        display: flex;
+    }
+    button{
+        width: 70px;
+        height: 20px;
+    }
+  </style>
+  <body>
+    <form id="form" action="">
+      <div id="searchx">
+        <input type="text" id="serach" placeholder="search" />
+        <div id="minicont"></div>
+      </div>
+      <button type="submit">submit</button>
+    </form>
+    <div id="container"></div>
+    <div>
+        <button
+            id="prev">prev</button>
+        <p id="counter"></p>
+        <button id="next">next</button>
+    </div>
+  </body>
+  <script>
+    let data
+    let count = 1
+    
+    let counter = document.getElementById('counter')
+    counter.innerHTML = count
+    let prev = document.getElementById('prev')
+    prev.addEventListener('click',()=>handlepages('-1'))
+    
+    let next = document.getElementById('next')
+    next.addEventListener('click',()=>handlepages('+1'))
+    
+    let form = document.getElementById('form')
+    let minicont = document.getElementById('minicont')
+    let serach = document.getElementById('serach')
+    serach.addEventListener('input',(e)=>{handlesearch(e)})
+    form.addEventListener('submit',(e)=>{handlesubmit(e)})
+    let container = document.getElementById('container')
+
+    let apikey = 'c63a0106'
+
+    let fetchdata = async(searchterm) =>{
+        let res = await fetch(`https://www.omdbapi.com/?apikey=${apikey}&s=${searchterm}&page=${count}`)
+        data = await res.json()
+        console.log(data)
+        return data
+    }
+    let handlesearch= async(e)=>{
+        e.preventDefault()
+        let st= e.target.value
+        ans = await fetchdata(st)
+        showminicont(ans.Search)
+    }
+    let showminicont = (arr) =>{
+        minicont.innerHTML = ''
+        arr.forEach((ele)=>{
+            let title = document.createElement('p')
+            title.innerHTML = `${ele.Title}`
+            minicont.append(title) 
+        })
+    }
+    function handlesubmit(e){
+        e.preventDefault()
+        showdata(data.Search)
+        e.target[0].value = ''
+        minicont.innerHTML=''
+    }
+
+
+    let showdata = (arr) =>{
+        container.innerHTML=''
+        arr.forEach(ele => {
+            let cards = document.createElement('div')
+            let  title = document.createElement('p')
+            title.innerHTML = `${ele.Title}`
+            let year = document.createElement('p')
+            year.innerHTML = `${ele.Year}`
+            let imdbID = document.createElement('p')
+            imdbID.innerHTML = `${ele.imdbID}`
+            let type = document.createElement('p')
+            type.innerHTML = `${ele.Type}`
+            let poster = document.createElement('img')
+            poster.src = `${ele.Poster}`
+
+            cards.append(poster,imdbID,title,year,type)
+            container.append(cards)
+        });
+    }
+
+
+    async function handlepages(c) {
+    if (c === '+1') {
+        count += 1;
+    } else if (c === '-1' && count > 1) {
+        count -= 1;
+    }
+    counter.innerHTML = count;
+    ans = await fetchdata()
+    showdata(ans.Search)
+}
+  </script>
+</html>
