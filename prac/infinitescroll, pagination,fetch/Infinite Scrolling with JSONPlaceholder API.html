@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Infinite Scrolling</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="gallery"></div>
+  </body>
+  <script>
+    let galary = document.getElementById("gallery");
+    let data
+    let page = 2;
+    async function fetchdata() {
+      let res = await fetch("https://jsonplaceholder.typicode.com/photos");
+        data = await res.json();
+      showdata(data,page);
+    }
+
+    fetchdata();
+
+    function showdata(arr,page) {
+      let ans = arr.filter((ele) => page === ele.albumId);
+      console.log(ans);
+      ans.forEach((ele) => {
+        let cards = document.createElement("div");
+        let id = document.createElement("p");
+        let aid = document.createElement("p");
+        id.innerHTML = `id : ${ele.id}`;
+        aid.innerHTML = `aid : ${ele.albumId}`;
+        let title = document.createElement("p");
+        title.innerHTML = `title: ${ele.title}`;
+        // let image1 = document.createElement('img')
+        // let image2 = document.createElement('img')
+        // image1.src = ele.url
+        // image2.src = ele.thumbnailUrl
+        cards.append(aid, id, title);
+        galary.append(cards);
+      });
+    }
+
+    window.addEventListener("scroll", () => {
+      let clientHeight = document.documentElement.clientHeight;
+      let scrollHeight = document.documentElement.scrollHeight;
+      let scrollTop = document.documentElement.scrollTop;
+
+      //console.log(clientHeight,scrollHeight,scrollTop);
+      if (scrollHeight - clientHeight <= Math.ceil(scrollTop)) {
+        console.log("we are at the bottom");
+        page++;
+        showdata(data,page)
+        // fetchData(page);
+        // flag = false;
+      }
+    });
+  </script>
+</html>
