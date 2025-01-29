@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fancy Todo App</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Arial", sans-serif;
+      }
+
+      body {
+        background: #f4f4f4;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      form {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        display: flex; 
+        gap: 10px;
+        width: 100%;
+      }
+
+      input {
+        flex: 1;
+        padding: 10px;
+        border: 2px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+        outline: none;
+        transition: 0.3s;
+      }
+
+      input:focus {
+        border-color: #007bff;
+      }
+
+      button {
+        padding: 10px 15px;
+        border: none;
+        background: #007bff;
+        color: white;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: 0.3s;
+        font-size: 16px;
+      }
+
+      button:hover {
+        background: #0056b3;
+      }
+
+      #container {
+        margin-top: 20px;
+        width: 100%;
+        max-width: 500px;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .card {
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        position: relative;
+      }
+
+      .card p {
+        font-size: 16px;
+        color: #333;
+      }
+
+      .card button {
+        padding: 8px;
+        font-size: 14px;
+        margin-top: 5px;
+      }
+
+      .completed {
+        background: #28a745 !important;
+      }
+
+      .delete-btn {
+        background: #dc3545;
+      }
+
+      .edit-btn {
+        background: #ffc107;
+      }
+
+      .delete-btn:hover {
+        background: #b02a37;
+      }
+
+      .edit-btn:hover {
+        background: #d39e00;
+      }
+
+      .btn-group {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <form action="" id="form">
+      <input type="text" id="titleinput" placeholder="Title" />
+      <input type="text" id="desinput" placeholder="Description" />
+      <button id="subbtn" type="submit">Submit</button>
+    </form>
+    <div id="container"></div>
+  </body>
+  <script>
+    let form = document.getElementById("form");
+    let container = document.getElementById("container");
+    let titleinput = document.getElementById("titleinput");
+    let desinput = document.getElementById("desinput");
+    let editflag;
+
+    let handlesumbit = (e) => {
+      e.preventDefault();
+      let obj = {
+        title: e.target[0].value,
+        description: e.target[1].value,
+      };
+      console.log(obj);
+      if (editflag) {
+        fetch(`http://localhost:3000/${editflag}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(obj),
+        })
+          .then(() => console.log("PUT done"))
+          .then(() => fetchdata());
+
+        editflag = undefined;
+      } else {
+        fetch("http://localhost:3000", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(obj),
+        })
+          .then(() => console.log("POST done"))
+          .then(() => fetchdata());
+      }
+    };
+
+    let handledelete = async (id) => {
+      await fetch(`http://localhost:3000/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then(() => console.log("delete done"))
+        .then(() => fetchdata());
+    };
+
+    let handlecompletechange = async (ele) => {
+      let uh = !ele.complete;
+      let ans = {
+        complete: uh,
+      };
+      let res = await fetch(`http://localhost:3000/${ele.id}/complete`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(ans),
+      }).then(() => fetchdata());
+    };
+
+    let handleedit = (ele) => {
+      editflag = ele.id;
+      titleinput.value = ele.title;
+      desinput.value = ele.description;
+    };
+
+    let fetchdata = async () => {
+      let res = await fetch("http://localhost:3000");
+      let data = await res.json();
+      console.log(data);
+      showdata(data);
+    };
+
+    let showdata = async (arr) => {
+      container.innerHTML = "";
+      arr.forEach((ele) => {
+        let card = document.createElement("div");
+        card.classList.add("card");
+
+        let id = document.createElement("p");
+        id.innerHTML = `<strong>ID:</strong> ${ele.id}`;
+        let title = document.createElement("p");
+        title.innerHTML = `<strong>Title:</strong> ${ele.title}`;
+        let description = document.createElement("p");
+        description.innerHTML = `<strong>Description:</strong> ${ele.description}`;
+
+        let complete = document.createElement("button");
+        complete.innerHTML = `${ele.complete ? "Completed" : "Incomplete"}`;
+        complete.classList.add(ele.complete ? "completed" : "incomplete");
+        complete.addEventListener("click", () => {
+          handlecompletechange(ele);
+        });
+
+        let deletebtn = document.createElement("button");
+        deletebtn.innerHTML = "Delete";
+        deletebtn.classList.add("delete-btn");
+        deletebtn.addEventListener("click", () => handledelete(ele.id));
+
+        let edit = document.createElement("button");
+        edit.innerHTML = "Edit";
+        edit.classList.add("edit-btn");
+        edit.addEventListener("click", () => {
+          handleedit(ele);
+        });
+
+        let btnGroup = document.createElement("div");
+        btnGroup.classList.add("btn-group");
+        btnGroup.append(complete, edit, deletebtn);
+
+        card.append(id, title, description, btnGroup);
+        container.append(card);
+      });
+    };
+
+    fetchdata();
+
+    form.addEventListener("submit", (e) => handlesumbit(e));
+  </script>
+</html>

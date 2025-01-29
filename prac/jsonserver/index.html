@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    
+    <form
+      action=""
+      id="bookform"
+      style="display: flex; flex-direction: column; width: 400px"
+    >
+      <input type="text" placeholder="title" />
+      <input type="text" placeholder="author" />
+      <input type="text" placeholder="genre" />
+      <input type="text" placeholder="publishedYear" />
+      <select name="" id="">
+        <option value="">Avabiility</option>
+        <option value="true">true</option>
+        <option value="false">false</option>
+      </select>
+      <button type="submit">submit</button>
+    </form>
+    <br /><br /><br /> 
+    <form
+      action=""
+      style="display: flex; flex-direction: column; width: 400px"
+      id="memberform"
+    >
+      <input type="text" placeholder="name" />
+      <select name="" id="active">
+        <option value="">Active</option>
+        <option value="true">true</option>
+        <option value="false">false</option>
+      </select>
+      <button type="submit">submit</button>
+    </form>
+    <div id="container">
+        <h1>books</h1>
+        <div id="bookconte">
+            
+        </div>
+        <h1>members</h1>
+        <div id="memberconte">
+            
+        </div>
+    </div>
+  </body>
+  <script>
+    let bookconte = document.getElementById("bookconte")
+    let memberconte = document.getElementById("memberconte")
+    let bookform = document.getElementById("bookform");
+    let memberform = document.getElementById("memberform");
+
+    let showbookdata= (arr)=>{
+        bookconte.innerHTML = ''
+        arr.forEach(ele => {
+            let card = document.createElement('div')
+            let id = document.createElement('p')
+            id.innerHTML = `id: ${ele.id}`
+            let title = document.createElement('p')
+            title.innerHTML =`title: ${ele.title}`
+            let author =document.createElement('p')
+            author.innerHTML =`author: ${ele.author}`
+            let genre = document.createElement('p')
+            genre.innerHTML =`genre: ${ele.genre}`
+            let publishedYear =document.createElement('p')
+            publishedYear.innerHTML =`year: ${ele.publishedYear}`
+            let available =document.createElement('p')
+            available.innerHTML = `available: ${(ele.available)? 'yes' : 'no'}`
+            let deletebtn = document.createElement('button')
+            deletebtn.innerHTML = 'delete'
+            deletebtn.addEventListener('click',(ele)=>{handledelete(ele)})
+            card.append(id,title,author,genre,publishedYear,available)
+            bookconte.append(card)
+        });
+
+    }
+    let showmemberdata= (arr)=>{
+        memberconte.innerHTML=''
+        arr.forEach(ele => {
+            let card = document.createElement('div')
+            let id = document.createElement('p')
+            id.innerHTML = `id: ${ele.id}`
+            let name = document.createElement('p')
+            name.innerHTML =`name: ${ele.name}`
+            let membershipDate = document.createElement('p')
+            membershipDate.innerHTML =`membershipDate: ${ele.membershipDate}`
+            let active =document.createElement('p')
+            active.innerHTML = `available: ${(ele.active)? 'yes' : 'no'}`
+            card.append(id,name,membershipDate,active)
+            memberconte.append(card)
+        })
+    }
+
+    let fetchbookdata = async () => {
+      res = await fetch("http://localhost:3000/books");
+      data = await res.json();
+        showbookdata(data)
+    };
+    let fetchmemberdata = async (url) => {
+      res = await fetch("http://localhost:3000/members");
+      data = await res.json();
+        showmemberdata(data)
+    }
+    fetchbookdata();
+    fetchmemberdata();
+
+    let handlebooksubmit = (e) => {
+        e.preventDefault();
+      let id = Math.floor(Math.random() * 1000000000);
+      let title = e.target[0].value;
+      let author = e.target[1].value;
+      let genre = e.target[2].value;
+      let publishedYear = e.target[3].value;
+      let available;
+      if (e.target[4].value === "true") {
+        available = true;
+      } else {
+        available = false;
+      }
+
+      let obj = {
+        id,
+        title,
+        author,
+        genre,
+        publishedYear,
+        available,
+      };
+      fetch("http://localhost:3000/books", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(obj),
+      }).then(() => fetchdata("http://localhost:3000/books"));
+    };
+
+    let handlemembersubmit = (e) => {
+        e.preventDefault();
+      let id = Math.floor(Math.random() * 1000000000);
+      let date = new Date();
+    let formattedDate = date.toISOString().split('T')[0]
+    console.log(formattedDate)
+      let name = e.target[0].value;
+      let active;
+      if (e.target[1].value === "true") {
+        active = true;
+      } else {
+        active = false;
+      }
+      let obj = {
+        id,
+        name,
+        membershipDate: formattedDate,
+        active,
+      };
+
+      fetch('http://localhost:3000/members', {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(obj),
+      }).then(() => fetchdata('http://localhost:3000/members'));
+    };
+
+    let handledelete = (el) =>{}
+
+    bookform.addEventListener("submit", (e) => {
+      handlebooksubmit(e);
+    });
+    memberform.addEventListener("submit", (e) => {
+      handlemembersubmit(e);
+    });
+  </script>
+</html>

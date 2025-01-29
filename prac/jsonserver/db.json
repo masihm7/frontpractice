@@ -1,0 +1,119 @@
+{
+  "books": [
+    {
+      "id": "1",
+      "title": "Dune",
+      "author": "Frank Herbert",
+      "genre": "Science Fiction",
+      "publishedYear": 1965,
+      "available": true
+    },
+    {
+      "id": "2",
+      "title": "1984",
+      "author": "George Orwell",
+      "genre": "Dystopian",
+      "publishedYear": 1949,
+      "available": false
+    },
+    {
+      "id": 731299606,
+      "title": "eteth",
+      "author": "etheth",
+      "genre": "rrthrth",
+      "publishedYear": "rthrth",
+      "available": "true"
+    },
+    {
+      "id": 158797767,
+      "title": "erhth",
+      "author": "ethh",
+      "genre": "rth",
+      "publishedYear": "rthrt",
+      "available": false
+    },
+    {
+      "id": 39752082,
+      "title": "wrgeg",
+      "author": "erger",
+      "genre": "erge",
+      "publishedYear": "erge",
+      "available": true
+    },
+    {
+      "id": 497872220,
+      "title": "5t45y45",
+      "author": "ererdg",
+      "genre": "srfgr",
+      "publishedYear": "ergerg",
+      "available": false
+    },
+    {
+      "id": 912855421,
+      "title": "regerg",
+      "author": "ergerg",
+      "genre": "ergerg",
+      "publishedYear": "ergege",
+      "available": false
+    }
+  ],
+  "members": [
+    {
+      "id": "1",
+      "name": "John Doe",
+      "membershipDate": "2023-01-15",
+      "active": true
+    },
+    {
+      "id": "2",
+      "name": "Jane Smith",
+      "membershipDate": "2022-05-23",
+      "active": false
+    },
+    {
+      "id": 21945244,
+      "name": "gfsfg",
+      "active": false
+    },
+    {
+      "id": 294535987,
+      "name": "etge",
+      "active": false
+    },
+    {
+      "id": 535710684,
+      "name": "erge",
+      "active": true
+    },
+    {
+      "id": 302493006,
+      "name": "og",
+      "formattedDate": "2025-01-23",
+      "active": false
+    },
+    {
+      "id": 352824508,
+      "name": "er",
+      "formattedDate": "2025-01-23",
+      "active": false
+    },
+    {
+      "id": 620979871,
+      "name": "",
+      "formattedDate": "2025-01-23",
+      "active": false
+    },
+    {
+      "id": 720164206,
+      "name": "erg",
+      "formattedDate": "2025-01-23",
+      "active": true
+    },
+    {
+      "id": 23777406,
+      "name": "wfwr",
+      "membershipDate": "2025-01-23",
+      "active": true
+    }
+  ]
+}
